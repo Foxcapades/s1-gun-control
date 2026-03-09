@@ -1,0 +1,11 @@
+/*
+
+!docs/
+!GunControl*
+!GunControl/*
+!license
+!makefile
+!readme.adoc
+!.gitignore
+
+*.user

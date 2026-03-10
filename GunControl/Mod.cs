@@ -18,9 +18,6 @@ namespace GunControl {
       var items = Singleton<Registry>.Instance.GetAllItems();
 
       foreach (var item in items) {
-        if (item.Equippable == null)
-          continue;
-
         if (item.Category != EItemCategory.Tools)
           continue;
 

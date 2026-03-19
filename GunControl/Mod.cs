@@ -9,12 +9,14 @@ using ScheduleOne.DevUtilities;
 using ScheduleOne.Core.Items.Framework;
 #endif
 
-[assembly: MelonInfo(typeof(GunControl.Mod), "Gun Control", "1.1.0", "Foxcapades")]
+[assembly: MelonInfo(typeof(GunControl.Mod), GunControl.Mod.MOD_NAME, "1.1.0", "Foxcapades")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 #nullable enable
 namespace GunControl {
   public class Mod: MelonMod {
+    public const string MOD_NAME = "Gun Control";
+
     public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
       if (sceneName != "Main")
         return;

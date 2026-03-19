@@ -1,24 +1,40 @@
-VERSION := $(shell grep 'MelonInfo' GunControl/Mod.cs | cut -d'"' -f4 | tr -d '\n')
+PROJECT_ID := GunControl
+VERSION := $(shell grep 'MelonInfo' $(PROJECT_ID)/Mod.cs | cut -d'"' -f2 | tr -d '\n')
+
 CONFIGURATION := IL2Cpp
 LOWER_CONFIG := $(shell echo $(CONFIGURATION) | tr A-Z a-z)
-BUILD_TARGET := GunControl.dll
-OUTPUT_TARGET := GunControl.$(CONFIGURATION).dll
+
+BUILD_DLL  := $(PROJECT_ID).dll
+OUTPUT_DLL := $(PROJECT_ID).$(CONFIGURATION).dll
+
+TARGET_DIRECTORY := target
+INSTALL_DIRECTORY := ${INSTALL_DIRECTORY}
 
 ifeq ($(CONFIGURATION),IL2Cpp)
-	NETPATH := net6.0
+	NET_PATH := net6.0
 else
-	NETPATH := netstandard2.1
+	NET_PATH := netstandard2.1
 endif
+
+BUILD_TARGET := bin/$(CONFIGURATION)/$(NET_PATH)/$(BUILD_DLL)
+OUTPUT_TARGET := $(TARGET_DIRECTORY)/$(OUTPUT_DLL)
+RELEASE_ZIP := $(TARGET_DIRECTORY)/$(shell echo $(PROJECT_ID) | tr -d a-z | tr A-Z a-z)-$(LOWER_CONFIG)-v$(VERSION).zip
 
 .PHONY: default
 default:
 	@echo "NO"
 
 .PHONY: build
-build: GunControl/Mod.cs target/$(OUTPUT_TARGET)
+build: $(OUTPUT_TARGET)
 
 .PHONY: package
-package: target/gc-$(LOWER_CONFIG)-v$(VERSION).zip
+package: $(RELEASE_ZIP)
+
+.PHONY: install
+install: build
+	@if [ ! -z "$(INSTALL_DIRECTORY)" ]; then \
+		cp $(OUTPUT_TARGET) "$(INSTALL_DIRECTORY)"; \
+	fi
 
 .PHONY: release
 release: package-il2cpp package-mono
@@ -39,12 +55,12 @@ build-il2cpp:
 package-il2cpp:
 	@$(MAKE) CONFIGURATION=IL2Cpp package
 
-bin/$(CONFIGURATION)/$(NETPATH)/$(BUILD_TARGET):
+$(BUILD_TARGET): $(PROJECT_ID)/Mod.cs
 	@dotnet build -c $(CONFIGURATION)
 
-target/$(OUTPUT_TARGET): bin/$(CONFIGURATION)/$(NETPATH)/$(BUILD_TARGET)
-	@mkdir -p target
-	@cp bin/$(CONFIGURATION)/$(NETPATH)/$(BUILD_TARGET) target/$(OUTPUT_TARGET)
+$(OUTPUT_TARGET): $(BUILD_TARGET)
+	@mkdir -p $(TARGET_DIRECTORY)
+	@cp $(BUILD_TARGET) $(OUTPUT_TARGET)
 
-target/gc-$(LOWER_CONFIG)-v$(VERSION).zip: target/$(OUTPUT_TARGET)
-	@cd target && zip -9 $(@F) $(OUTPUT_TARGET)
+$(RELEASE_ZIP): $(OUTPUT_TARGET)
+	@cd $(TARGET_DIRECTORY) && zip -9 $(@F) $(OUTPUT_DLL)

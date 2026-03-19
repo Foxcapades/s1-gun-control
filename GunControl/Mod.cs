@@ -2,10 +2,14 @@ using MelonLoader;
 #if IL2CPP
 using Il2CppScheduleOne;
 using Il2CppScheduleOne.DevUtilities;
-using Il2CppScheduleOne.ItemFramework;
+using Il2CppScheduleOne.Core.Items.Framework;
+#elif MONO
+using ScheduleOne;
+using ScheduleOne.DevUtilities;
+using ScheduleOne.Core.Items.Framework;
 #endif
 
-[assembly: MelonInfo(typeof(GunControl.Mod), "Gun Control", "1.0.0", "Foxcapades")]
+[assembly: MelonInfo(typeof(GunControl.Mod), "Gun Control", "1.1.0", "Foxcapades")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 #nullable enable
